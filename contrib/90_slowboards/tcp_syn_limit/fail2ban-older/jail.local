@@ -1,0 +1,23 @@
+[tor-syn-flood]
+# This jail bans repeat offenders who keep sending SYNs despite
+# iptables REJECTs when there are too many SYNs on the Tor ORPort or
+# DirPort for the system to handle.  If a host keeps sending SYNs
+# when the machine is getting too many, eventually it will be put in
+# the DROP pile instead of the REJECT pile for a few minutes.  This
+# is necessary on Raspberry Pi (at least) due to "circuit creation
+# storms" which can overwhelm the machine or reduce its efficiency
+# at relaying due to wasting time dealing with sending REJECTs to
+# hosts which won't scale back when they get the first few REJECTs.
+
+# IMPORTANT TODO: calculate LAN ignoreip and port when installing
+# a Cipollini node.
+
+enabled = true
+ignoreip = 192.168.0.0/24
+port = 31923,31924
+filter = torport-reject
+logpath = /var/log/kern.log
+maxretry = 5
+findtime = 300
+bantime = 600
+

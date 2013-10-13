@@ -14,8 +14,17 @@ card.
    plan to relay more than about 2Mbps.
 
 2. Install fail2ban ('aptitude install fail2ban') and then put the files in
-   fail2ban/ in /etc/fail2ban/
+   the appropriate fail2ban directory here in /etc/fail2ban/.
+
+   Debian wheezy ships with fail2ban 0.8.6, which does not yet support
+   jail.d, so use the 'older' directory.  If you have fail2ban 0.8.11 or
+   newer, you can use the 0.8.11 directory.
 
 This is PRE-alpha and HAS NOT been battle-tested yet.  I wrote it during a
 circuit creation / SYN storm but the storm abated before I'd figured out the
 proper fail2ban jail syntax.
+
+Immediate tinkering suggestion: reduce findtime to 60, bantime to 90, to maybe
+preserve already-connected peers who had circuits through us, or at least not
+choke them off so bad, even if they close their circuits within 90 seconds of
+silent treatment.
