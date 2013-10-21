@@ -21,7 +21,8 @@ class BandwidthWatcher:
         """
         pass
 
-    def random_list_subset(self, lst, size):
+    @staticmethod
+    def random_list_subset(lst, size):
         """
         @param lst list
         @param size int
