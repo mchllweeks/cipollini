@@ -20,6 +20,11 @@ card.
    jail.d, so use the 'older' directory.  If you have fail2ban 0.8.11 or
    newer, you can use the 0.8.11 directory.
 
+   Note that on startup, on a slow machine, fail2ban-server MAY chew up a
+   lot of CPU time for a minute or five, especially if you've installed it
+   with a lot of noise already in the logs - it has to parse the most recent
+   log files from top to bottom before it settles in; this is normal.
+
 This is PRE-alpha and HAS NOT been battle-tested yet.  I wrote it during a
 circuit creation / SYN storm but the storm abated before I'd figured out the
 proper fail2ban jail syntax.
