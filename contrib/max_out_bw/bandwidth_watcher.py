@@ -11,7 +11,10 @@ class BandwidthWatcher:
         """
         @return int
         """
-        return self.max_bw
+        if not self.max_bw and not self.min_bw:
+            self.max_bw = max(self.quick_baseline())
+            self.min_bw = min(self.quick_baseline())
+        return self.max_bw, self.min_bw
 
     def file_upload(self, server, file_object):
         """
@@ -30,9 +33,11 @@ class BandwidthWatcher:
         """
         new_list = []
         x = 0
-        while x <= size:
-            new_list.append(choice(lst))
-            x += 1
+        while x < size:
+            rchoice = choice(lst)
+            if rchoice not in new_list:
+                new_list.append(rchoice)
+                x += 1
         return new_list
 
     def get_file_object(self, size):
@@ -41,11 +46,49 @@ class BandwidthWatcher:
         """
         pass
 
-    def quick_baseline(self):
+    def file_upload_test(self, file_size, list_size):
         """
+        @return list returns a list of transfer rates
         """
-        f = self.get_file_object(1)
-        servers = self.random_list_subset(self.server_list, 5)
+        f = self.get_file_object(file_size)
+        servers = self.random_list_subset(self.server_list, size)
         transfer_rates = []
         for server in servers:
             transfer_rates.append(self.file_upload(server, f))
+
+    def quick_baseline(self):
+        """
+        @return list list of averages of all multiple file_upload_test calls
+        """
+        list_of_averages = []
+        try1_small_file = self.file_upload_test(1,5)
+        for x in try1_small_file:
+            sum_try1 = x + sum_try1
+        try1_avg = sum_try1 / len(try1_small_file)
+        list_of_averages.append(try1_avg)
+
+        try2_small_file = self.file_upload_test(1,5)
+        for x in try2_small_file:
+            sum_try2 = x + sum_try2
+        try2_avg = sum_try2 / len(try2_small_file)
+        list_of_averages.append(try2_avg)
+
+        try3_small_file = self.file_upload_test(1, 5)
+        for x in try3_small_file:
+            sum_try3 = x + sum_try3
+        try3_avg = sum_try3 / len(try3_small_file)
+        list_of_averages.append(try3_avg)
+
+        try1_large_file = self.file_upload_test(1, 5)
+        for x in try1_large_file:
+            sum_try1 = x + sum_try1
+        try1_avg = sum_try1 / len(try1_large_file)
+        list_of_averages.append(try1_avg)
+
+        try2_large_file = self.file_upload_test(1, 5)
+        for x in try1_large_file:
+            sum_try2 = x + sum_try2
+        try2_avg = sum_try2 / len(try2_large_file)
+        list_of_averages.append(try2_avg)
+
+        return list_of_averages
