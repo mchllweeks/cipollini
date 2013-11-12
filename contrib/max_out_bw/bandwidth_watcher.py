@@ -1,9 +1,13 @@
+import os
 import requests
 import time
 from random import choice
 from tempfile import TemporaryFile
 
 class Timer:
+    """
+    @return seconds
+    """
     def __enter__(self):
         self.start = time.clock()
         return self
@@ -16,8 +20,7 @@ class Timer:
 class BandwidthWatcher:
     # this will eventually need a list of speed test
     # sites we can use
-    server_list = ['http://httpbin.org/', 'http://eu.httpbin.org/', 'http://www.posttestserver.com/',
-                   'https://posttestserver.com/post.php', 'http://greensuisse.zzl.org/product/dump/dump.php',
+    server_list = ['http://httpbin.org/', 'http://eu.httpbin.org/', 'https://posttestserver.com/post.php',
                    'http://www.newburghschools.org/testfolder/dump.php']
     max_bw = None
     min_bw = None
@@ -35,11 +38,11 @@ class BandwidthWatcher:
         """
         @param server string
         @param file_object file like object
-        @return int average transfer rate
+        @return int average transfer rate in seconds
         """
-        files = {'file': open(file_object, 'rb')}
         with Timer() as t:
-            p = requests.post(server, files=files)
+            file = {'file': file_object}
+            p = requests.post(server, files = file)
             p.content
         return t.interval
 
@@ -61,12 +64,12 @@ class BandwidthWatcher:
 
     def get_file_object(self, size):
         """
-        @param size file size in bytes
+        @param size file size in kilobytes
         """
-        f = open('dev/urandom')
-        f.read(size)
         tempfile = TemporaryFile()
-        return f.write(tempfile)
+        tempfile.write(os.urandom(size))
+        tempfile.seek(0)
+        return tempfile
 
     def file_upload_test(self, file_size, list_size):
         """
@@ -87,12 +90,22 @@ class BandwidthWatcher:
         """
         list_of_averages = []
 
-        for x in range(1, 3):
-            x = x + 1
-            try_small_file = self.file_upload_test(314572,5)
-            for y in try_small_file:
-                sum_try = y + sum_try
+        #try small file
+        for x in range(1, 4):
+            try_small_file = self.file_upload_test(314572,4)
+            for transfer_time in try_small_file:
+                sum_try = 0
+                sum_try = transfer_time + sum_try
             try_avg = sum_try / len(try_small_file)
+            list_of_averages.append(try_avg)
+
+        #try large file
+        for x in range (1, 3):
+            try_large_file = self.file_upload_test(2097152,4)
+            for transfer_time in try_large_file:
+                sum_try = 0
+                sum_try = transfer_time + sum_try
+            try_avg = sum_try / len(try_large_file)
             list_of_averages.append(try_avg)
 
         return list_of_averages
