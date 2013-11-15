@@ -89,21 +89,20 @@ class BandwidthWatcher:
         @return list list of averages of all multiple file_upload_test calls
         """
         list_of_averages = []
-
+        sum_try = 0
         #try small file
         for x in range(1, 4):
             try_small_file = self.file_upload_test(314572,4)
             for transfer_time in try_small_file:
-                sum_try = 0
                 sum_try = transfer_time + sum_try
             try_avg = sum_try / len(try_small_file)
             list_of_averages.append(try_avg)
 
+        sum_try = 0
         #try large file
         for x in range (1, 3):
             try_large_file = self.file_upload_test(2097152,4)
             for transfer_time in try_large_file:
-                sum_try = 0
                 sum_try = transfer_time + sum_try
             try_avg = sum_try / len(try_large_file)
             list_of_averages.append(try_avg)
